@@ -1,0 +1,25 @@
+<routes>
+         <vType acceleration="2.6" deceleration="4.5" guiShape="passenger" id="right_car" impatience="1.0" jmCrossingGap="0" jmIgnoreFoeProb="1" jmIgnoreFoeSpeed="50.0" jmIgnoreKeepClearTime="0" jmTimegapMinor="0.0" length="5.0" maxSpeed="15.0" minGap="2.5" sigma="0.5" speedFactor="1.0" vClass="passenger"/> "
+         <vType acceleration="2.6" deceleration="4.5" guiShape="passenger" id="left_car" impatience="1.0" jmCrossingGap="0" jmIgnoreFoeProb="1" jmIgnoreFoeSpeed="50.0" jmIgnoreKeepClearTime="0" jmTimegapMinor="0.0" length="5.0" maxSpeed="15.0" minGap="2.5" sigma="0.5" speedFactor="1.0" vClass="passenger"/> "
+        
+        <route id="4to2" edges="4to1 1to2" />
+        <route id="4to3" edges="4to1 1to3" />
+        <route id="4to5" edges="4to1 1to5" />
+        
+        <route id="5to3" edges="5to1 1to3" />
+        <route id="3to5" edges="3to1 1to5" />
+        
+        <flow id="up" color="0,1,1"  begin="0" end= "200" probability="0.20" type="right_car">
+            <route edges="5to1 1to3"/>
+        </flow>
+        <flow id="down" color="1,1,1"  begin="0" end= "200" probability="0.20" type="right_car">
+            <route edges="3to1 1to5"/>
+        </flow>
+		<flow id="left" color="1,1,0"  begin="0" end= "200" probability="0.20" type="right_car">
+            <route edges="4to1 1to2"/>
+        </flow>
+		<flow id="right" color="1,0,1"  begin="0" end= "200" probability="0.20" type="right_car">
+            <route edges="2to1 1to4"/>
+        </flow>
+        
+</routes>

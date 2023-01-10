@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 8-11-2018 14:25:27 by Netedit Version 0.32.0
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="single_lane_road.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="single_lane_road.net.xml"/>
+    </output>
+
+    <processing>
+        <no-internal-links value="true"/>
+        <no-turnarounds value="true"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+        <junctions.corner-detail value="0"/>
+        <rectangular-lane-cut value="false"/>
+        <walkingareas value="false"/>
+    </processing>
+
+</configuration>
+-->
+
+<net version="0.27" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="0.00,0.00" convBoundary="10.00,60.00,2510.00,60.00" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
+
+    <edge id="gneE1" from="gneJ2" to="gneJ3" priority="1" spreadType="center">
+        <lane id="gneE1_0" index="0" speed="36.11" length="2500.00" shape="10.00,60.00 2510.00,60.00"/>
+    </edge>
+
+    <junction id="gneJ2" type="dead_end" x="10.00" y="60.00" incLanes="" intLanes="" shape="10.00,61.60 10.00,58.40"/>
+    <junction id="gneJ3" type="dead_end" x="2510.00" y="60.00" incLanes="gneE1_0" intLanes="" shape="2510.00,58.40 2510.00,61.60"/>
+
+</net>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- debug config -->
+<launch>
+	<copy file="single_lane_road.net.xml" />
+	<copy file="single_lane_road.rou.xml" />
+	<copy file="single_lane_road.sumocfg" type="config" />
+</launch>
+

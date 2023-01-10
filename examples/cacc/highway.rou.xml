@@ -1,0 +1,9 @@
+<routes>
+         <vType acceleration="2.6" deceleration="4.5" guiShape="passenger/sedan" id="personen_auto" length="5.0" maxSpeed="45.0" minGap="0.0" sigma="0.5" tau="0.1" speedFactor="normc(1,0.1,0.3,2)" vClass="passenger"/>
+		 
+        
+        <flow id="links" color="0,1,1"  begin="0" end= "200" probability="0.65" type="personen_auto" departSpeed="max">
+            <route edges="gneE1"/>
+        </flow>
+        
+</routes>
