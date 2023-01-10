@@ -21,7 +21,7 @@ CarStatus getLeader(LAddress::L2Type ownId) {
         for(auto& entry: CarStatuses)
         {
             CarStatus otherCar = entry.second;
-            if(otherCar.leaderRank < leaderCar.leaderRank) {
+            if(otherCar.leaderRank > leaderCar.leaderRank) {
                 // make the car with the lowest leaderId the leader
                 leaderCar = otherCar;
             }
@@ -65,13 +65,34 @@ void UpdateCarControl (CarStatus leader, bool isLeader, TraCICommandInterface::V
 
     bool isAfterIntersection = currentRoadId.find("1to") != std::string::npos;
     bool isBeforeIntersection = (currentRoadId.find("to1") != std::string::npos) || (currentRoadId.find("_1") != std::string::npos) ;
+    bool isAfterIntersection = (currentRoadId.find("1to") != std::string::npos);
+    bool isBeforeIntersection = (currentRoadId.find("to1") != std::string::npos);
+//
+//
+//    //    testing whether we should be leader or whether we have already passed the intersection and we need to find another leader.
+//   if(isLeader && isAfterIntersection){
+//
+//   }
+//
+//
+
+
+
+
+
     bool isNextCar;
-    long *nextCar = std::find(std::begin(leader.nextCars), std::end(leader.nextCars), ownAddressDouble);
-    if(nextCar != std::end(leader.nextCars)) {
-        isNextCar = true;
-    } else {
-        isNextCar = false;
-    }
+        long *nextCar = std::find(std::begin(leader.nextCars), std::end(leader.nextCars), ownAddressDouble);
+        if(nextCar != std::end(leader.nextCars)) {
+            isNextCar = true;
+            traciVehicle->setColor(veins::TraCIColor::fromTkColor("blue"));
+        } else {
+            isNextCar = false;
+            traciVehicle->setColor(veins::TraCIColor::fromTkColor("red"));
+        }
+
+
+
+
 
     EV << "currentRoadId: " << currentRoadId << std::endl;
 
@@ -81,6 +102,7 @@ void UpdateCarControl (CarStatus leader, bool isLeader, TraCICommandInterface::V
             traciVehicle->setColor(veins::TraCIColor::fromTkColor("green"));
             if(traciVehicle->isStopReached()) {
                 traciVehicle->resume();
+
             }
         } else {
             traciVehicle->setColor(veins::TraCIColor::fromTkColor("red"));
@@ -88,11 +110,33 @@ void UpdateCarControl (CarStatus leader, bool isLeader, TraCICommandInterface::V
         }
     } else {
         // car is past intersection and of no concern
-        traciVehicle->setColor(veins::TraCIColor::fromTkColor("yellow"));
+        traciVehicle->setColor(veins::TraCIColor::fromTkColor("pink"));
+
+        if(isLeader){
+            // tried to add this, lars can do better.
+
+            if(CarStatuses.size() > 1) {
+
+                  CarStatuses.erase(0);
+                  traciVehicle->setColor(veins::TraCIColor::fromTkColor("yellow"));
+
+              }
+
+
+
+
+        }
+
         if(traciVehicle->isStopReached()) {
             traciVehicle->resume();
+
         }
     }
+
+
+
+
+
 }
 
 std::vector<CarStatus> getCarsOnRoad(std::string roadId) {
@@ -169,7 +213,7 @@ void VirtualTrafficLights::initialize(int stage) {
 
         // DO NOT REMOVE
         traciVehicle->setSpeedMode( 0 ); //disables right of way check at junctions!
-        traciVehicle->setColor(veins::TraCIColor::fromTkColor("blue")); // we start as a blue car because reasons
+        traciVehicle->setColor(veins::TraCIColor::fromTkColor("pink")); // we start as a blue car because reasons
         // Do whatever you want below here
 
         // schedule traffic check
@@ -214,15 +258,16 @@ void VirtualTrafficLights::onBSM(DemoSafetyMessage* bsm) {
 
         double ownAddress = myId;
         if(ownAddress ==  vtlm->getNextCars(0) || ownAddress ==  vtlm->getNextCars(1) || ownAddress ==  vtlm->getNextCars(2) || ownAddress ==  vtlm->getNextCars(3)) {
-            traciVehicle->setColor(veins::TraCIColor::fromTkColor("blue"));
+                // traciVehicle->setColor(veins::TraCIColor::fromTkColor("blue"));
+
         }
-        if(address != ownAddress) {
+
             // do not save own messages
             //            CarStatus update = { address, position, dist, speed, time_received, leaderRank, roadID, prefferedRoads[0]=vtlm->getSenderPreferredRoads(0), prefferedRoads[1]=vtlm->getSenderPreferredRoads(1) };
             CarStatus update = { address, preferredRoad1, preferredRoad2, position, dist, speed, time_received, leaderRank, roadID, lanePosition, vtlm->getNextCars(0), vtlm->getNextCars(1), vtlm->getNextCars(2), vtlm->getNextCars(3)};
             //            EV << "update car preferredRoad1 " << update.preferredRoad1 << std::endl;
             CarStatuses[address] = update;
-        }
+
     }
 }
 
@@ -239,7 +284,23 @@ void VirtualTrafficLights::onWSA(DemoServiceAdvertisment* wsa) {
 void VirtualTrafficLights::handleSelfMsg(cMessage* msg) {
     CarStatus leader = getLeader(myId);
     if ( msg->getKind() == TRAFFIC_CHECK ){
-        bool isLeader = leader.address == myId; //  check if we are leader before sending a leader message
+
+        //  check if we are leader before sending a leader message
+        bool isLeader = leader.address == myId;
+
+
+
+
+        // maybe we need to implement some logic here to revoke the leadership?
+
+//
+//        bool isAfterIntersection = (currentRoadId.find("1to") != std::string::npos);
+//
+//        if (isLeader && isAfterIntersection){
+//            CarStatus leader = CarStatuses[CarStatuses.begin()->second];
+//            isLeader=false;
+//        }
+
         UpdateCarControl(leader, isLeader, traciVehicle, myId);
         traffic_check = msg->dup();
         scheduleAt(simTime()+0.5, traffic_check);
@@ -267,7 +328,7 @@ void VirtualTrafficLights::handleSelfMsg(cMessage* msg) {
 //            vtlm->setSenderLeaderRank(randomLeaderRank);
 //            CarStatus leader = getLeader(randomLeaderRank);
             passedCars += 4;
-            int leaderRank = 1;
+            int leaderRank = leader.leaderRank +1;
             vtlm->setSenderLeaderRank(leaderRank);
             std::string roadIdVt1 = "5to1";
             std::string roadIdHz1 = "4to1";
@@ -313,7 +374,7 @@ void VirtualTrafficLights::handleSelfMsg(cMessage* msg) {
             //            vtlm->setNextCars(2, vtlm->getNextCars(2));
             //            vtlm->setNextCars(3, vtlm->getNextCars(3));
             //            vtlm->setSenderLeaderRank(vtlm->getSenderLeaderRank());
-            int leaderRank = 30000;
+            int leaderRank = 1;
             vtlm->setSenderLeaderRank(leaderRank);
         }
 
